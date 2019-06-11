@@ -9,6 +9,7 @@ const cartRoute = require('./routes/cart.route');
 const categoriesRoute = require('./routes/categories.route');
 const subcategoriesRoute = require('./routes/subcategories.route');
 const authRoute = require('./routes/auth.route');
+const subcatsnameRoute = require('./routes/subcatsname.route');
 
 global.__basedir = __dirname;
 
@@ -38,6 +39,7 @@ app.use('/subcategories', subcategoriesRoute);
 app.use(authRoute);
 app.use('/images', express.static(ImageDir));
 app.use('/images/thumbnail', express.static(ThumbnailImageDir));
+app.use('/subcat', subcatsnameRoute);
 
 
 const PORT = 3003;

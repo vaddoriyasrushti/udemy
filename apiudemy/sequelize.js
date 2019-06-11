@@ -28,10 +28,13 @@ const subcategoriesModel = require('./schemas/subcategories.schema');
 const subcategories = subcategoriesModel(sequelize, Sequelize);
 const signupModel = require('./schemas/signup.schema');
 const signups = signupModel(sequelize, Sequelize);
+const subcatsnameModel = require('./schemas/subcatsname.schema');
+const subcatsname = subcatsnameModel(sequelize, Sequelize);
 
 module.exports = {
   cart,
   categories,
   subcategories,
-  signups
+  signups,
+  subcatsname
 };

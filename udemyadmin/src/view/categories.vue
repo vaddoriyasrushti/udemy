@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <div data-app>
-      <div style="width:60%;  margin-left:auto; margin-right:auto;">
+      <div style="width:70%;  margin-left:auto; margin-right:auto;">
         <v-toolbar flat color="white">
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on }">
@@ -60,6 +60,31 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+
+          <v-dialog v-model="subcatModel" max-width="500px">
+            <v-card class="text-xs-center">
+              <v-flex xs12 class="text-xs-center text-sm-center text-md-center text-lg-center">
+                <div style="padding-top:25px;font-size:17px">
+                  Category Name :
+                  <b>{{catname}}</b>
+                </div>
+              </v-flex>
+              <v-flex xs12 class="text-xs-center text-sm-center text-md-center text-lg-center">
+                <v-text-field
+                  style="padding:30px"
+                  required
+                  v-model="subcategories"
+                  :rules="subcatRules"
+                  label="Subcategory"
+                ></v-text-field>
+              </v-flex>
+              <v-card-actions style="padding-left:150px">
+                <v-btn color="blue darken-1" flat @click="deletecat">Add</v-btn>
+                <v-btn color="blue darken-1" flat @click="subcatModel = false">Cancel</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+
           <v-divider class="mx-2" inset vertical></v-divider>
           <v-spacer></v-spacer>
         </v-toolbar>
@@ -69,7 +94,25 @@
             <tr>
               <td class="text-xs-left">{{ props.item.categoriesname }}</td>
               <td class="text-xs-left">{{ props.item.categoriesicon }}</td>
-              <td class="text-xs-left"></td>
+              <td class="text-xs-left">
+                <a-popover placement="bottom">
+                  <template slot="content">
+                    <p v-if="getsubtosub.length<=0">No Record Found</p>
+                    <ul v-for="(i,index) in getsubtosub" :key="index">
+                      <li>{{i}}</li>
+                    </ul>
+                    <!-- <a-button> -->
+                    <div @click="subcatModel=true">
+                      <i class="material-icons">add_circle_outline</i>
+                    </div>
+                    <!-- </a-button> -->
+                  </template>
+                  <a-button
+                    type="primary"
+                    @mouseover="$store.dispatch('subcategories/getsubcategories',props.item.categoriesname);catname=props.item.categoriesname"
+                  >Show Subcategories</a-button>
+                </a-popover>
+              </td>
               <td class="text-xs-left">
                 <v-icon small class="mr-2" @click="editcatModel(props.item)">edit</v-icon>
                 <v-icon small @click="deletecatModel(props.item.id)">delete</v-icon>
@@ -89,7 +132,7 @@ export default {
       headers: [
         {
           text: "Categories Name",
-          sortable: false
+          sortable: true
         },
         {
           text: "Icon Name",
@@ -107,24 +150,37 @@ export default {
       dialog: false,
       deleteModel: false,
       deletecatId: 0,
+      subcatModel: false,
       categoriesname: "",
       categoriesicon: "",
+      subcategories: "",
       selectedItem: {},
       isUpdate: 0,
       nameRules: [v => !!v || "Category Name is required"],
+      subcatRules: [v => !!v || "Subcategory Name is required"],
       iconRules: [v => !!v || "Category Icon is required"],
-      editedIndex: -1
+      editedIndex: -1,
+      catname: ""
     };
   },
   computed: {
     formTitle() {
-      return this.isUpdate === 1 ? "Edit Subcategories" : "New Subcategories";
+      return this.isUpdate === 1 ? "Edit Categories" : "New Categories";
     },
     getcategories() {
       return this.$store.state.categories.categories;
+    },
+    getsubtosub() {
+      let c = [];
+      this.$store.state.subcategories.allsubtosub.map(subcat => {
+        var index = c.indexOf(subcat.allsubtosub);
+        if (index == -1) {
+          c.push(subcat.allsubtosub);
+        }
+      });
+      return c;
     }
   },
-
   watch: {
     dialog(val) {
       val || this.close();
@@ -137,6 +193,9 @@ export default {
   },
 
   methods: {
+    handleMenuClick(e) {
+      console.log("click", e);
+    },
     addcat() {
       if (this.$refs.form.validate()) {
         let formData = {

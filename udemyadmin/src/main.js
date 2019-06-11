@@ -17,7 +17,6 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 import "ant-design-vue/dist/antd.css"
 
 
-
 export const router = new VueRouter({
   routes, // short for routes: routes
   mode: "history",
